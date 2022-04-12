@@ -14,7 +14,8 @@ const dotEnvVars = dotenv.config().parsed;
 
 const options = {
   key: fs.readFileSync((dotEnvVars as any).HTTPS_KEY),
-  cert: fs.readFileSync((dotEnvVars as any).HTTPS_CERT)
+  cert: fs.readFileSync((dotEnvVars as any).HTTPS_CERT),
+  dhparam: fs.readFileSync((dotEnvVars as any).DH_STRONG)
 };
 
 const {
