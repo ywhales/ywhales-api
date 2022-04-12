@@ -4,12 +4,18 @@ import { programs } from '@fluidchains/metaplex-js';
 import dotenv from "dotenv";
 import * as fs from 'fs';
 
+const https = require('https');
 const cors = require('cors');
 const express = require('express');
 const logger = require('./utils/logger');
 const app = express();
 
 const dotEnvVars = dotenv.config().parsed;
+
+const options = {
+  key: fs.readFileSync((dotEnvVars as any).HTTPS_KEY),
+  cert: fs.readFileSync((dotEnvVars as any).HTTPS_CERT)
+};
 
 const {
   metaplex: { AuctionManager },
@@ -33,6 +39,8 @@ app.get('/whales', async (req: any, res: any) => {
   const whales = await checkWhalesFile();
   res.send(whales);
 })
+
+https.createServer(options, app).listen(Number((dotEnvVars as any).PORT));
 
 async function updateWhales(whales: any) {
   const date = dateParser();
