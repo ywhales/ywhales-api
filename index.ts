@@ -6,6 +6,7 @@ import * as fs from 'fs';
 
 const cors = require('cors');
 const express = require('express');
+const logger = require('./utils/logger');
 const app = express();
 
 const dotEnvVars = dotenv.config().parsed;
@@ -19,7 +20,11 @@ const {
 app.use(cors());
 
 app.listen(Number((dotEnvVars as any).PORT), async () => {
-  console.log("Connected to port " + Number((dotEnvVars as any).PORT));
+  var dir = './logs';
+  if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+  }
+  logger.info("Connected to port " + Number((dotEnvVars as any).PORT));
   const whales = await checkWhalesFile();
   updateWhales(whales);
 })
@@ -32,12 +37,12 @@ app.get('/whales', async (req: any, res: any) => {
 async function updateWhales(whales: any) {
   const date = dateParser();
   if (whales !== null) {
-    console.log("whale's not empty")
+    logger.info("whale's not empty");
     lookForUpdates(whales, date);
     setInterval(() => lookForUpdates(whales, date), 300000);
   }
   if (whales === null) {
-    console.log("whale's empty, creating new one...")
+    logger.info("whale's empty, creating new one...");
     lookForUpdates(whales, date);
     setInterval(() => lookForUpdates(whales, date), 300000);
   }
@@ -64,16 +69,16 @@ async function lookForUpdates(whales: any, date: string) {
         // throws an error, you could also catch it here
         if (err) throw err;
         // success case, the file was saved
-        console.log('New history file saved!');
+        logger.info('New history file saved!');
       });
       fs.writeFile('./ywhales.json', writableContent, (err) => {
         // throws an error, you could also catch it here
         if (err) throw err;
         // success case, the file was saved
-        console.log('Changes saved!');
+        logger.info("Whale's registry update saved succesfully!");
       });
     } else {
-      console.log("No new whales found")
+      logger.info("No new whales found");
     }
   } else {
     const writableContent = JSON.stringify(
@@ -86,7 +91,7 @@ async function lookForUpdates(whales: any, date: string) {
       // throws an error, you could also catch it here
       if (err) throw err;
       // success case, the file was saved
-      console.log('Changes saved!');
+      logger.info("New Whale's registry saved succesfully!");
     });
   }
 }
@@ -96,6 +101,7 @@ async function checkWhalesFile() {
     const file = JSON.parse(fs.readFileSync('./ywhales.json').toString());
     return file;
   } catch (error) {
+    logger.error("Whale's registry file not found!");
     return null
   }
 }
