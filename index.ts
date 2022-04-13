@@ -12,11 +12,11 @@ const app = express();
 
 const dotEnvVars = dotenv.config().parsed;
 
-const options = {
-  key: fs.readFileSync((dotEnvVars as any).HTTPS_KEY),
-  cert: fs.readFileSync((dotEnvVars as any).HTTPS_CERT),
-  dhparam: fs.readFileSync((dotEnvVars as any).DH_STRONG)
-};
+//const options = {
+//  key: fs.readFileSync((dotEnvVars as any).HTTPS_KEY),
+//  cert: fs.readFileSync((dotEnvVars as any).HTTPS_CERT)
+//  dhparam: fs.readFileSync((dotEnvVars as any).DH_STRONG)
+//};
 
 const {
   metaplex: { AuctionManager },
@@ -41,7 +41,7 @@ app.get('/whales', async (req: any, res: any) => {
   res.send(whales);
 })
 
-https.createServer(options, app).listen(Number((dotEnvVars as any).PORT));
+//https.createServer(options, app).listen(Number((dotEnvVars as any).HTTPS_PORT));
 
 async function updateWhales(whales: any) {
   const date = dateParser();
@@ -58,9 +58,10 @@ async function updateWhales(whales: any) {
 }
 
 async function lookForUpdates(whales: any, date: string) {
+  try {
   const storeItems = await loadAccounts();
   // Update data
-  if (whales !== null) {
+  if (whales !== null && storeItems!== undefined) {
     if (whales.validWhales !== storeItems.length) {
       const writableContent = JSON.stringify(
         {
@@ -89,7 +90,8 @@ async function lookForUpdates(whales: any, date: string) {
     } else {
       logger.info("No new whales found");
     }
-  } else {
+  }
+  if (whales === null && storeItems !== undefined){
     const writableContent = JSON.stringify(
       {
         whales: storeItems,
@@ -102,6 +104,10 @@ async function lookForUpdates(whales: any, date: string) {
       // success case, the file was saved
       logger.info("New Whale's registry saved succesfully!");
     });
+  }
+  }
+  catch(error){
+    logger.error(error)
   }
 }
 
@@ -138,6 +144,7 @@ function checkLessThanTen(timeFormat: number) {
 
 async function loadAccounts() {
 
+  try {
   let storeItems = [];
   
   const store = new PublicKey((await STORE_ID));
@@ -166,5 +173,9 @@ async function loadAccounts() {
   }
 
   return storeItems;
+  }
+  catch(error){
+    logger.error(error)
+  }
 
 };
