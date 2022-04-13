@@ -12,12 +12,6 @@ const app = express();
 
 const dotEnvVars = dotenv.config().parsed;
 
-//const options = {
-//  key: fs.readFileSync((dotEnvVars as any).HTTPS_KEY),
-//  cert: fs.readFileSync((dotEnvVars as any).HTTPS_CERT)
-//  dhparam: fs.readFileSync((dotEnvVars as any).DH_STRONG)
-//};
-
 const {
   metaplex: { AuctionManager },
   metadata: { Metadata },
@@ -40,8 +34,6 @@ app.get('/whales', async (req: any, res: any) => {
   const whales = await checkWhalesFile();
   res.send(whales);
 })
-
-//https.createServer(options, app).listen(Number((dotEnvVars as any).HTTPS_PORT));
 
 async function updateWhales(whales: any) {
   const date = dateParser();
@@ -165,8 +157,8 @@ async function loadAccounts() {
     // Get safety deposit boxes
     const safetyDepositBoxes = await vaultData.getSafetyDepositBoxes(connection);
 
-    // Accept only auctions that have a started state, and omit the ones that have a vault state as inactive or deactivated
-    if (auctionData.data.state === 1 && (vaultData.data.state !== 0 && vaultData.data.state !== 3) && safetyDepositBoxes !== undefined) {
+    // Accept auctions that have a started/ended state, and omit the ones that have a vault state as inactive or deactivatedx
+    if (auctionData.data.state !== 0 && (vaultData.data.state !== 0 && vaultData.data.state !== 3) && safetyDepositBoxes !== undefined) {
       const findByMint = await Metadata.findByMint(connection, new PublicKey(safetyDepositBoxes[0].data.tokenMint));
       storeItems.push({ findByMint, price: priceFloor, auction: auctionData });
     }
