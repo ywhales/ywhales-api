@@ -4,6 +4,7 @@ import { programs } from '@fluidchains/metaplex-js';
 import dotenv from "dotenv";
 import * as fs from 'fs';
 
+const https = require('https');
 const cors = require('cors');
 const express = require('express');
 const logger = require('./utils/logger');
@@ -49,9 +50,10 @@ async function updateWhales(whales: any) {
 }
 
 async function lookForUpdates(whales: any, date: string) {
+  try {
   const storeItems = await loadAccounts();
   // Update data
-  if (whales !== null) {
+  if (whales !== null && storeItems!== undefined) {
     if (whales.validWhales !== storeItems.length) {
       const writableContent = JSON.stringify(
         {
@@ -80,7 +82,8 @@ async function lookForUpdates(whales: any, date: string) {
     } else {
       logger.info("No new whales found");
     }
-  } else {
+  }
+  if (whales === null && storeItems !== undefined){
     const writableContent = JSON.stringify(
       {
         whales: storeItems,
@@ -93,6 +96,10 @@ async function lookForUpdates(whales: any, date: string) {
       // success case, the file was saved
       logger.info("New Whale's registry saved succesfully!");
     });
+  }
+  }
+  catch(error){
+    logger.error(error)
   }
 }
 
@@ -129,6 +136,7 @@ function checkLessThanTen(timeFormat: number) {
 
 async function loadAccounts() {
 
+  try {
   let storeItems = [];
   
   const store = new PublicKey((await STORE_ID));
@@ -149,13 +157,17 @@ async function loadAccounts() {
     // Get safety deposit boxes
     const safetyDepositBoxes = await vaultData.getSafetyDepositBoxes(connection);
 
-    // Accept only auctions that have a started state, and omit the ones that have a vault state as inactive or deactivated
-    if (auctionData.data.state === 1 && (vaultData.data.state !== 0 && vaultData.data.state !== 3) && safetyDepositBoxes !== undefined) {
+    // Accept auctions that have a started/ended state, and omit the ones that have a vault state as inactive or deactivatedx
+    if (auctionData.data.state !== 0 && (vaultData.data.state !== 0 && vaultData.data.state !== 3) && safetyDepositBoxes !== undefined) {
       const findByMint = await Metadata.findByMint(connection, new PublicKey(safetyDepositBoxes[0].data.tokenMint));
       storeItems.push({ findByMint, price: priceFloor, auction: auctionData });
     }
   }
 
   return storeItems;
+  }
+  catch(error){
+    logger.error(error)
+  }
 
 };
