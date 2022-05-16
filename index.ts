@@ -32,6 +32,7 @@ app.listen(Number((dotEnvVars as any).PORT), async () => {
 
 app.get('/whales', async (req: any, res: any) => {
   const whales = await checkWhalesFile();
+  logger.info("Whales: " + whales);
   res.send(whales);
 })
 
@@ -40,12 +41,12 @@ async function updateWhales(whales: any) {
   if (whales !== null) {
     logger.info("whale's not empty");
     lookForUpdates(whales, date);
-    setInterval(() => lookForUpdates(whales, date), 300000);
+    setInterval(() => lookForUpdates(whales, date), 60000);
   }
   if (whales === null) {
     logger.info("whale's empty, creating new one...");
     lookForUpdates(whales, date);
-    setInterval(() => lookForUpdates(whales, date), 300000);
+    setInterval(() => lookForUpdates(whales, date), 60000);
   }
 }
 
