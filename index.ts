@@ -1,8 +1,12 @@
 import { PublicKey } from "@solana/web3.js";
-import { STORE_ID, connection } from "./vars";
-import { programs } from '@fluidchains/metaplex-js';
+import { STORE_ID, connection, STORE_OWNER } from "./vars";
 import dotenv from "dotenv";
 import * as fs from 'fs';
+import { AuctionManager } from "./sdk/programs/plex/AuctionManager";
+import { Auction, PriceFloorType } from "./sdk/programs/auction/Auction";
+import { Vault } from "./sdk/programs/vault/Vault";
+import { Metadata } from "./sdk/programs/metadata/Metadata";
+import { Store } from "./sdk/programs/plex/Store";
 
 const https = require('https');
 const cors = require('cors');
@@ -12,11 +16,11 @@ const app = express();
 
 const dotEnvVars = dotenv.config().parsed;
 
-const {
-  metaplex: { AuctionManager },
-  metadata: { Metadata },
-  vault: { Vault }
-} = programs;
+// const {
+//   metaplex: { AuctionManager },
+//   metadata: { Metadata },
+//   vault: { Vault }
+// } = programs;
 
 app.use(cors());
 
@@ -138,9 +142,9 @@ function checkLessThanTen(timeFormat: number) {
 async function loadAccounts() {
 
   try {
-  let storeItems = [];
+  let storeItems: {metadata: Metadata, price: number, auction: Auction}[] = [];
   
-  const store = new PublicKey((await STORE_ID));
+  const store = await Store.getPDA(STORE_OWNER);
 
   const auctionManagers = await AuctionManager.findMany(connection, {
     store: store,
@@ -148,7 +152,7 @@ async function loadAccounts() {
 
   for (const auction of auctionManagers) {
     const auctionData = await auction.getAuction(connection);
-    const priceFloor = auctionData.data.priceFloor.type === programs.auction.PriceFloorType.Minimum
+    const priceFloor = auctionData.data.priceFloor.type === PriceFloorType.Minimum
       ? auctionData.data.priceFloor.minPrice?.toNumber() || 0
       : 0;
 
@@ -161,7 +165,7 @@ async function loadAccounts() {
     // Accept auctions that have a started/ended state, and omit the ones that have a vault state as inactive or deactivatedx
     if (auctionData.data.state !== 0 && (vaultData.data.state !== 0 && vaultData.data.state !== 3) && safetyDepositBoxes !== undefined) {
       const findByMint = await Metadata.findByMint(connection, new PublicKey(safetyDepositBoxes[0].data.tokenMint));
-      storeItems.push({ findByMint, price: priceFloor, auction: auctionData });
+      storeItems.push({ metadata: findByMint, price: priceFloor, auction: auctionData });
     }
   }
 
