@@ -4,7 +4,7 @@ export const config = {
     programs: {
       // Metaplex
       auction: '2bhX9H5dAYaNqCHWVuJphto8eAwAxSQVRzvT5KJDs6eW',
-      metadata: 'DTrsfBtWUtFhvhzggLWdZXAhmKPbwEKRrSPNfGrxmAyB',
+      metadata: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
       metaplex: 'Fr6ufqFxV3AuYEPYDvRjR2ghaCg6RyzvU3k9pC5z6x94',
       vault: '4CJLCFj8dhHmAC3TJizaN2BqkzW6hDeviZwH9qsSBjwH',
       packs: 'BNRmGgciUJuyznkYHnmitA9an1BcDDiU9JmjEQwvBYVR',

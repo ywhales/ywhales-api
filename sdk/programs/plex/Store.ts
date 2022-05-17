@@ -64,8 +64,6 @@ import { METAPLEX_ID } from '../../../vars';
     }
   
     static async getPDA(owner: AnyPublicKey) {
-      console.log("Owner",owner)
-      console.log("Otro",MetaplexProgram.PREFIX)
 
       return MetaplexProgram.findProgramAddress([
         Buffer.from(MetaplexProgram.PREFIX),
