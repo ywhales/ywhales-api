@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { STORE_ID, connection, STORE_OWNER } from "./vars";
+import { STORE_ID, connection, STORE_OWNER, VAULT_ID, AUCTION_ID, METADATA_PROGRAM_ID, METAPLEX_ID } from "./vars";
 import dotenv from "dotenv";
 import * as fs from 'fs';
 import { AuctionManager } from "./sdk/programs/plex/AuctionManager";
@@ -30,6 +30,11 @@ app.listen(Number((dotEnvVars as any).PORT), async () => {
       fs.mkdirSync(dir);
   }
   logger.info("Connected to port " + Number((dotEnvVars as any).PORT));
+  logger.info("Store " + STORE_OWNER.toBase58());
+  logger.info("Vault ID: " + VAULT_ID.toBase58());
+  logger.info("Auction ID: " + AUCTION_ID.toBase58());
+  logger.info("Metadata ID: " + METADATA_PROGRAM_ID.toBase58());
+  logger.info("Metaplex ID: " + METAPLEX_ID.toBase58());
   const whales = await checkWhalesFile();
   updateWhales(whales);
 })
