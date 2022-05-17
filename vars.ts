@@ -13,15 +13,15 @@ export const connection = new Connection((dotEnvVars as any).RPC);
 
 
 export const METADATA_PROGRAM_ID = new PublicKey(
-    'DTrsfBtWUtFhvhzggLWdZXAhmKPbwEKRrSPNfGrxmAyB');
-    
-    export const VAULT_ID = new PublicKey(
-    '4CJLCFj8dhHmAC3TJizaN2BqkzW6hDeviZwH9qsSBjwH');
-    
-    export const AUCTION_ID = new PublicKey(
-    '2bhX9H5dAYaNqCHWVuJphto8eAwAxSQVRzvT5KJDs6eW');
-    
-    export const METAPLEX_ID = new PublicKey(
-    'Fr6ufqFxV3AuYEPYDvRjR2ghaCg6RyzvU3k9pC5z6x94') ;
-    
+'ymejMoHH1bsxXCjKjjsVoCZGkq6bpmcxgTHYfLKRoHq');
+
+export const VAULT_ID = new PublicKey(
+'yvaUJxtAiuphyL7JiVMMdY7uTJe1ekb4LmHXtBv5SFd');
+
+export const AUCTION_ID = new PublicKey(
+'yauNkf2KVyLp9YBQb4mNeiwFCCWu1Vei9Tx3EsgCESG');
+
+export const METAPLEX_ID = new PublicKey(
+'yp1ZrQ2ghLMDNdaGdYLiwi8QRFyws2tAHNa7JG2VuTq') ;
+
     
