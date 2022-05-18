@@ -11,9 +11,9 @@ export const STORE_ID = Store.getPDA(STORE_OWNER);
 
 export const connection = new Connection((dotEnvVars as any).RPC);
 
-
+//Keep the metadata always on metaXXXXX
 export const METADATA_PROGRAM_ID = new PublicKey(
-'ymejMoHH1bsxXCjKjjsVoCZGkq6bpmcxgTHYfLKRoHq');
+'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 
 export const VAULT_ID = new PublicKey(
 'yvaUJxtAiuphyL7JiVMMdY7uTJe1ekb4LmHXtBv5SFd');
